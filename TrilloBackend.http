@@ -1,0 +1,6 @@
+@TrilloBackend_HostAddress = http://localhost:5260
+
+GET {{TrilloBackend_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
