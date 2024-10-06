@@ -1,6 +1,6 @@
 # Trillo Backend - Hotel Booking System API
 
-[Project Tutorial Documentati](https://ella0110.github.io/)
+[Tutorial Document](https://ella0110.github.io/)
 
 This project is a **backend RESTful API** designed for a hotel booking system, implemented using **C# and ASP.NET Core**, and utilizing **SQL Server** as the database. The API provides essential services such as booking management, room availability, and customer records.
 
