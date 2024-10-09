@@ -16,6 +16,9 @@ public class TrilloContext : DbContext
       .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", true)
       .AddEnvironmentVariables()
       .Build();
+    // log to console
+    // options.EnableSensitiveDataLogging(true);
+    // options.LogTo(Console.WriteLine);
     // Connect to the database.
     options.UseSqlServer(configuration.GetConnectionString("TrilloDatabase"));
   }

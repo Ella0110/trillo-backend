@@ -19,14 +19,15 @@ public static class DbInitializer {
     context.SaveChanges();
 
     var reviews = new Review[] {
-      new Review{UserId=101,HotelId=hotels[0].HotelId,Body="The environment is very nice.",Rating=8.8},
-      new Review{UserId=102,HotelId=hotels[1].HotelId,Body="The food is very nice.",Rating=7.8},
-      new Review{UserId=103,HotelId=hotels[2].HotelId,Body="The price is very nice.",Rating=6.8},
-      new Review{UserId=104,HotelId=hotels[3].HotelId,Body="The bed is very nice.",Rating=3.8},
-      new Review{UserId=105,HotelId=hotels[4].HotelId,Body="The location is very nice.",Rating=8.5},
-      new Review{UserId=106,HotelId=hotels[5].HotelId,Body="The transport is very nice.",Rating=1.8},
-      new Review{UserId=107,HotelId=hotels[6].HotelId,Body="The people is very nice.",Rating=8.2},
+      new Review{UserId=101,Hotel=hotels[0], Body="The environment is very nice.",Rating=8.8},
+      new Review{UserId=102,Hotel=hotels[1],Body="The food is very nice.",Rating=7.8},
+      new Review{UserId=103,Hotel=hotels[2],Body="The price is very nice.",Rating=6.8},
+      new Review{UserId=104,Hotel=hotels[3],Body="The bed is very nice.",Rating=3.8},
+      new Review{UserId=105,Hotel=hotels[4],Body="The location is very nice.",Rating=8.5},
+      new Review{UserId=106,Hotel=hotels[5],Body="The transport is very nice.",Rating=1.8},
+      new Review{UserId=107,Hotel=hotels[6],Body="The people is very nice.",Rating=8.2},
     };
+
     context.Reviews.AddRange(reviews);
     context.SaveChanges();
 
@@ -37,22 +38,22 @@ public static class DbInitializer {
       new Order{UserId=104,Amount=3784.4,GuestName="Tala"},
       new Order{UserId=105,Amount=278743.4,GuestName="Ada"},
       new Order{UserId=106,Amount=3985,GuestName="Hui"},
-      new Order{UserId=107,Amount=3875.6,GuestName="Kswi"},
-      new Order{UserId=108,Amount=438273.5,GuestName="Edsa"},
+      new Order{UserId=107,Amount=3875.6,GuestName="Kswi"}
     };
+
     context.Orders.AddRange(orders);
     context.SaveChanges();
 
     var bookings = new Booking[] {
-      new Booking{HotelId=hotels[0].HotelId,OrderId=orders[0].OrderId,Price=83.3,isAvailable=true},
-      new Booking{HotelId=hotels[1].HotelId,OrderId=orders[1].OrderId,Price=384.5,isAvailable=false},
-      new Booking{HotelId=hotels[2].HotelId,OrderId=orders[2].OrderId,Price=22.3,isAvailable=true},
-      new Booking{HotelId=hotels[3].HotelId,OrderId=orders[3].OrderId,Price=55.6,isAvailable=true},
-      new Booking{HotelId=hotels[4].HotelId,OrderId=orders[4].OrderId,Price=394.5,isAvailable=false},
-      new Booking{HotelId=hotels[5].HotelId,OrderId=orders[0].OrderId,Price=78,isAvailable=false},
-      new Booking{HotelId=hotels[6].HotelId,OrderId=orders[6].OrderId,Price=92.4,isAvailable=true},
-      new Booking{HotelId=hotels[2].HotelId,OrderId=orders[2].OrderId,Price=100,isAvailable=false},
+      new Booking{Hotel=hotels[0],Order=orders[0],Price=83.3,isAvailable=true},
+      new Booking{Hotel=hotels[1],Order=orders[1],Price=384.5,isAvailable=false},
+      new Booking{Hotel=hotels[2],Order=orders[2],Price=22.3,isAvailable=true},
+      new Booking{Hotel=hotels[3],Order=orders[3],Price=55.6,isAvailable=true},
+      new Booking{Hotel=hotels[4],Order=orders[4],Price=394.5,isAvailable=false},
+      new Booking{Hotel=hotels[5],Order=orders[5],Price=78,isAvailable=false},
+      new Booking{Hotel=hotels[6],Order=orders[6],Price=92.4,isAvailable=true}
     };
+
     context.Bookings.AddRange(bookings);
     context.SaveChanges();
   }
