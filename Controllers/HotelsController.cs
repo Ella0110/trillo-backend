@@ -87,8 +87,8 @@ namespace TrilloBackend.Controllers
         }
 
         // PostGET: api/hotels/search
-        [HttpPost("search")]
-        public async Task<ActionResult<IEnumerable<Hotel>>> PostGetHotel(string? name, string? address)
+        [HttpGet("search")]
+        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotelSearch(string? name, string? address)
         {
             // check Name and Address record
             var hotelQuery = _context.Hotels

@@ -44,15 +44,41 @@ public static class DbInitializer {
     context.Orders.AddRange(orders);
     context.SaveChanges();
 
-    var bookings = new Booking[] {
-      new Booking{Hotel=hotels[0],Order=orders[0],Price=83.3,isAvailable=true},
-      new Booking{Hotel=hotels[1],Order=orders[1],Price=384.5,isAvailable=false},
-      new Booking{Hotel=hotels[2],Order=orders[2],Price=22.3,isAvailable=true},
-      new Booking{Hotel=hotels[3],Order=orders[3],Price=55.6,isAvailable=true},
-      new Booking{Hotel=hotels[4],Order=orders[4],Price=394.5,isAvailable=false},
-      new Booking{Hotel=hotels[5],Order=orders[5],Price=78,isAvailable=false},
-      new Booking{Hotel=hotels[6],Order=orders[6],Price=92.4,isAvailable=true}
-    };
+
+    Random random = new Random();
+    DateTime currentDate = DateTime.Now;
+    DateTime firstDayOfNextMonth = new DateTime(currentDate.Year, currentDate.Month, 1).AddMonths(1);// Get next months date
+    int numberOfBookingsPerHotel = DateTime.DaysInMonth(firstDayOfNextMonth.Year, firstDayOfNextMonth.Month); // Get next months days
+    int totalHotels = hotels.Length; // Assuming hotels is already defined
+
+    // Initialize a list to store the bookings
+    List<Booking> bookingsList = new List<Booking>();
+
+    // Generate bookings for each hotel
+    for (int i = 0; i < totalHotels; i++)
+    {
+        for (int j = 0; j < numberOfBookingsPerHotel; j++)
+        {
+            // Generate a random price, for example between 50 and 500
+            double randomPrice = Math.Round(random.NextDouble() * (500 - 50) + 50);
+
+            // Get the date for each day of the next month
+            DateTime bookingDate = firstDayOfNextMonth.AddDays(j).Date; 
+
+            // Create a new booking and add it to the list
+            bookingsList.Add(new Booking
+            {
+                Hotel = hotels[i], // Assign the current hotel
+                Order = null, // Set the order ID to null
+                Date = bookingDate,
+                Price = randomPrice, // Assign the randomly generated price
+                isAvailable = true // Set availability to true
+            });
+        }
+    }
+
+    // Convert the list to an array if needed
+    var bookings = bookingsList.ToArray();
 
     context.Bookings.AddRange(bookings);
     context.SaveChanges();
