@@ -27,6 +27,15 @@ namespace TrilloBackend.Controllers
                 .ToListAsync();
         }
 
+        [HttpGet("Booking")]
+        public async Task<ActionResult<IEnumerable<Booking>>> GetBookings()
+        {
+            return await _context.Bookings
+                .Include(e => e.Order)
+                .Include(e => e.Hotel)
+                .ToListAsync();
+        }
+
         // GET: api/hotels/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Hotel>> GetHotel(long id)
@@ -45,18 +54,16 @@ namespace TrilloBackend.Controllers
             return hotel;
         }
 
-         // GET: api/hotels/5/booking
+        // GET: api/hotels/5/booking
         [HttpGet("{id}/bookings")]
-        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotelBooking(int id, DateTime?startdate, DateTime?enddate)
+        public async Task<ActionResult<IEnumerable<Booking>>> GetHotelBooking(int id, DateTime?startdate, DateTime?enddate)
         {
             if (startdate == null || enddate == null ) {
                 return BadRequest("Hotel at least one date must be provided.");
             }
 
-            var hotelbooking = await _context.Hotels
-                .Where(e => e.HotelId == id)
-                .Select(e => e.Bookings
-                    .Where(booking => booking.Date >= startdate && booking.Date < enddate))
+            var hotelbooking = await _context.Bookings
+                .Where(e => e.HotelId == id && e.Date >= startdate && e.Date < enddate)
                 .ToListAsync();
 
             if (hotelbooking == null)
@@ -150,10 +157,70 @@ namespace TrilloBackend.Controllers
         [HttpPost]
         public async Task<ActionResult<Hotel>> PostHotel(Hotel hotel)
         {
-            _context.Hotels.Add(hotel);
-            await _context.SaveChangesAsync();
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-            return CreatedAtAction(nameof(GetHotel), new { id = hotel.HotelId }, hotel);
+            // Check for duplicate hotel
+            if (_context.Hotels.Any(h => h.Name == hotel.Name && h.Address == hotel.Address))
+            {
+                return Conflict("A hotel with the same name and address already exists.");
+            }
+
+            try
+            {
+                _context.Hotels.Add(hotel);
+                await _context.SaveChangesAsync();
+
+                return CreatedAtAction(nameof(GetHotel), new { id = hotel.HotelId }, hotel);
+            }
+            catch (DbUpdateException ex)
+            {
+                var detailedError = ex.InnerException?.Message ?? ex.Message;
+                return StatusCode(500, $"An error occurred while saving the hotel: {detailedError}");
+            }
+        }
+
+
+         // POST: api/hotels/5/booking
+        [HttpPost("{id}/booking")]
+        public async Task<ActionResult<Booking>> PostHotelBooking(int id, Booking booking)
+        {
+            if (!_context.Bookings.Any(h => h.HotelId == booking.HotelId))
+            {
+                return Conflict("A booking must related with a hotel");
+            }
+
+            if (BookingExists(id)) 
+            {
+                if (id != booking.BookingId)
+                {
+                    return BadRequest();
+                }
+                _context.Entry(booking).State = EntityState.Modified;
+                await _context.SaveChangesAsync();
+                return NoContent();
+            }
+            else
+            {
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
+
+                try
+                {
+                    _context.Bookings.Add(booking);
+                    await _context.SaveChangesAsync();
+                    return CreatedAtAction(nameof(GetBookings), new { id = booking.BookingId }, booking);
+                }
+                catch (DbUpdateException ex)
+                {
+                    var detailedError = ex.InnerException?.Message ?? ex.Message;
+                    return StatusCode(500, $"An error occurred while saving the hotel: {detailedError}");
+                }
+            }
         }
 
 // ***********************************************************************************
@@ -177,6 +244,11 @@ namespace TrilloBackend.Controllers
         private bool HotelExists(int id)
         {
             return _context.Hotels.Any(e => e.HotelId == id);
+        }
+
+        private bool BookingExists(int id)
+        {
+            return _context.Bookings.Any(e => e.BookingId == id);
         }
     }
 }
