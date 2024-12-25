@@ -15,6 +15,8 @@ namespace TrilloBackend.Controllers
             _context = context;
         }
 
+// ***********************************************************************************
+// ********GET********
         // GET: api/hotels
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Hotel>>> GetHotels()
@@ -43,50 +45,29 @@ namespace TrilloBackend.Controllers
             return hotel;
         }
 
-
-        // PUT: api/hotels/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutHotel(int id, Hotel hotel)
+         // GET: api/hotels/5/booking
+        [HttpGet("{id}/bookings")]
+        public async Task<ActionResult<IEnumerable<Hotel>>> GetHotelBooking(int id, DateTime?startdate, DateTime?enddate)
         {
-            if (id != hotel.HotelId)
-            {
-                return BadRequest();
+            if (startdate == null || enddate == null ) {
+                return BadRequest("Hotel at least one date must be provided.");
             }
 
-            _context.Entry(hotel).State = EntityState.Modified;
+            var hotelbooking = await _context.Hotels
+                .Where(e => e.HotelId == id)
+                .Select(e => e.Bookings
+                    .Where(booking => booking.Date >= startdate && booking.Date < enddate))
+                .ToListAsync();
 
-            try
+            if (hotelbooking == null)
             {
-                await _context.SaveChangesAsync();
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!HotelExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return NotFound();
             }
 
-            return NoContent();
+            return Ok(hotelbooking);
         }
 
-        // POST: api/hotels
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Hotel>> PostHotel(Hotel hotel)
-        {
-            _context.Hotels.Add(hotel);
-            await _context.SaveChangesAsync();
-
-            return CreatedAtAction(nameof(GetHotel), new { id = hotel.HotelId }, hotel);
-        }
-
-        // PostGET: api/hotels/search
+        // GET: api/hotels/search
         [HttpGet("search")]
         public async Task<ActionResult<IEnumerable<Hotel>>> GetHotelSearch(string? name, string? address)
         {
@@ -129,6 +110,54 @@ namespace TrilloBackend.Controllers
             return new List<Hotel>();
         }
 
+// ***********************************************************************************
+// ********PUT********
+        // PUT: api/hotels/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("{id}")]
+        public async Task<IActionResult> PutHotel(int id, Hotel hotel)
+        {
+            if (id != hotel.HotelId)
+            {
+                return BadRequest();
+            }
+
+            _context.Entry(hotel).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!HotelExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+// ***********************************************************************************
+// ********POST********
+        // POST: api/hotels
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPost]
+        public async Task<ActionResult<Hotel>> PostHotel(Hotel hotel)
+        {
+            _context.Hotels.Add(hotel);
+            await _context.SaveChangesAsync();
+
+            return CreatedAtAction(nameof(GetHotel), new { id = hotel.HotelId }, hotel);
+        }
+
+// ***********************************************************************************
+// ********DELETE********
         // DELETE: api/hotels/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteHotel(int id)
