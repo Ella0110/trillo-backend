@@ -11,6 +11,17 @@ builder.Services.AddDbContext<TrilloContext>();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy.WithOrigins("http://localhost:3000",
+                            "https://ella0110.github.io/trillo/") 
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
+
 var app = builder.Build();
 
 // Prepare database.
@@ -43,6 +54,7 @@ app.MapGet("/Ping", () =>
 .WithName("Ping")
 .WithOpenApi();
 
+app.UseCors("AllowSpecificOrigin");
 app.UseHttpsRedirection();
 app.MapControllers();
 app.Run();

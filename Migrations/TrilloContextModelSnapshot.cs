@@ -80,6 +80,7 @@ namespace TrilloBackend.Migrations
                         .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gallery")
@@ -88,6 +89,13 @@ namespace TrilloBackend.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TotalRating")
+                        .HasColumnType("float");
 
                     b.Property<int?>("TotalVote")
                         .HasColumnType("int");

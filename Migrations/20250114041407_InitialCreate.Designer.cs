@@ -11,7 +11,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace TrilloBackend.Migrations
 {
     [DbContext(typeof(TrilloContext))]
-    [Migration("20241222074941_InitialCreate")]
+    [Migration("20250114041407_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -83,6 +83,7 @@ namespace TrilloBackend.Migrations
                         .HasDefaultValueSql("getdate()");
 
                     b.Property<string>("Description")
+                        .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("Gallery")
@@ -91,6 +92,13 @@ namespace TrilloBackend.Migrations
 
                     b.Property<string>("Name")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SubDescription")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double?>("TotalRating")
+                        .HasColumnType("float");
 
                     b.Property<int?>("TotalVote")
                         .HasColumnType("int");
